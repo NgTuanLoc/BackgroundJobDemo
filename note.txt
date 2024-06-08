@@ -1,0 +1,2 @@
+dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations
+dotnet ef database update
