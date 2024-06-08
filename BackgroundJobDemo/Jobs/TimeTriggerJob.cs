@@ -18,12 +18,12 @@ public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration confi
     {
         _logger.LogInformation("Timed Hosted Service running.");
 
-        _timer = new Timer(DoWorkAsync, null, TimeSpan.Zero, TimeSpan.FromSeconds(30)); // Set the interval to 5 seconds
+        _timer = new Timer(_ => DoWorkAsync(), null, TimeSpan.Zero, TimeSpan.FromSeconds(30)); // Set the interval to 5 seconds
 
         return Task.CompletedTask;
     }
 
-    private async void DoWorkAsync(object? state)
+    private async void DoWorkAsync()
     {
         var now = DateTime.UtcNow;
 
