@@ -15,7 +15,7 @@ var redis = builder.AddRedis("redis")
 // Services
 builder.AddProject<Projects.BackgroundJobDemo>("background-job")
     .WithEnvironment("IsAspireRunning", "true")
-    .WithReplicas(10)
+    .WithReplicas(5)
     .WithReference(redis)
     .WithReference(db.GetEndpoint("db"));
 

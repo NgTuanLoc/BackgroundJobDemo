@@ -1,21 +1,24 @@
-﻿using Medallion.Threading.Redis;
+﻿using BackgroundJobDemo.Infrastructure;
+using Medallion.Threading.Redis;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace demo_background_job.Job;
 
-public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration configuration) : IHostedService, IDisposable
+public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : IHostedService, IDisposable
 {
     private readonly ILogger<TimeTriggerJob> _logger = logger;
     private Timer? _timer = null;
     private readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(configuration.GetConnectionString("redis") ?? "");
     private readonly string _lockKey = "TimedHostedServiceLock";
-    private readonly TimeSpan _lockExpiry = TimeSpan.FromSeconds(5); // Ensure lock expiry is slightly more than the interval
+    private readonly TimeSpan _lockExpiry = TimeSpan.FromMinutes(2); // Ensure lock expiry is slightly more than the interval
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Timed Hosted Service running.");
 
-        _timer = new Timer(DoWorkAsync, null, TimeSpan.Zero, TimeSpan.FromSeconds(5)); // Set the interval to 5 seconds
+        _timer = new Timer(DoWorkAsync, null, TimeSpan.Zero, TimeSpan.FromSeconds(30)); // Set the interval to 5 seconds
 
         return Task.CompletedTask;
     }
@@ -24,15 +27,33 @@ public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration confi
     {
         var now = DateTime.UtcNow;
 
-        var @lock = new RedisDistributedLock("MyLockName", _redis.GetDatabase());
+        var @lock = new RedisDistributedLock($"{_lockKey}/{now}", _redis.GetDatabase(), options => options.Expiry(_lockExpiry));
+
         await using var handle = await @lock.TryAcquireAsync();
         if (handle != null)
         {
-            _logger.LogInformation("Timed Background Service is working. Time: {time}", now);
+            //_logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
+            await handle.DisposeAsync();
             return;
         }
 
-        //_logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
+        await UpdateProductAsync(now.Second.ToString());
+
+        _logger.LogInformation("Timed Background Service is working. Time: {time}", now);
+    }
+
+    private async Task UpdateProductAsync(string second)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var product = await db.Products.FirstOrDefaultAsync();
+        if (product != null)
+        {
+            product.Price++;
+            product.Name = $"{product.Name}==={second}";
+            await db.SaveChangesAsync();
+        }
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
