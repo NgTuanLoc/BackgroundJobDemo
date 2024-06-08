@@ -32,7 +32,7 @@ public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration confi
         await using var handle = await @lock.TryAcquireAsync();
         if (handle != null)
         {
-            //_logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
+            _logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
             await handle.DisposeAsync();
             return;
         }
