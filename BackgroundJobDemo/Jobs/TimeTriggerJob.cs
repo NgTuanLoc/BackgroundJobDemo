@@ -30,8 +30,7 @@ public class TimeTriggerJob : IHostedService, IDisposable
         var now = DateTime.UtcNow;
         var lockKey = _lockKey;
 
-        //if (AcquireLock(lockKey, Environment.MachineName, _lockExpiry))
-        if (true)
+        if (AcquireLock(lockKey, Environment.MachineName, _lockExpiry))
         {
             try
             {
@@ -51,7 +50,7 @@ public class TimeTriggerJob : IHostedService, IDisposable
         }
         else
         {
-            //_logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
+            _logger.LogInformation("Another instance is working. Skipping this iteration. Time: {time}", now);
         }
     }
 
