@@ -44,7 +44,7 @@ public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration confi
 
     private async Task UpdateProductAsync(string second)
     {
-        using var scope = scopeFactory.CreateScope();
+        using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var product = await db.Products.FirstOrDefaultAsync();
