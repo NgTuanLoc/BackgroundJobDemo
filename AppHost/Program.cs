@@ -19,4 +19,9 @@ builder.AddProject<Projects.BackgroundJobDemo>("background-job")
     .WithReference(redis)
     .WithReference(db.GetEndpoint("db"));
 
+builder.AddProject<Projects.Quarzt>("quarzt")
+    .WithEnvironment("IsAspireRunning", "true")
+    .WithReference(redis)
+    .WithReference(db.GetEndpoint("db"));
+
 builder.Build().Run();

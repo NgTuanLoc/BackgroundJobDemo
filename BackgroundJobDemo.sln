@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackgroundJobDemo", "BackgroundJobDemo\BackgroundJobDemo.csproj", "{08A709D9-095C-4521-A13B-CFE321344924}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{BCD0829F-E652-447B-82DA-0D0E601387A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppHost", "AppHost\AppHost.csproj", "{BCD0829F-E652-447B-82DA-0D0E601387A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quarzt", "Quarzt\Quarzt.csproj", "{F8281D1B-1B24-4868-8CC0-2675D634FCE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BCD0829F-E652-447B-82DA-0D0E601387A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCD0829F-E652-447B-82DA-0D0E601387A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCD0829F-E652-447B-82DA-0D0E601387A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8281D1B-1B24-4868-8CC0-2675D634FCE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8281D1B-1B24-4868-8CC0-2675D634FCE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8281D1B-1B24-4868-8CC0-2675D634FCE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8281D1B-1B24-4868-8CC0-2675D634FCE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

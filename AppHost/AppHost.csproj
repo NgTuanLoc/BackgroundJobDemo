@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BackgroundJobDemo\BackgroundJobDemo.csproj" />
+    <ProjectReference Include="..\Quarzt\Quarzt.csproj" />
   </ItemGroup>
 
 </Project>

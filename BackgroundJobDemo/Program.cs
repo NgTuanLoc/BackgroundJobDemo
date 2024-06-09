@@ -26,7 +26,23 @@ app.MapGet("/reset", async (AppDbContext context) =>
         products.Name = "Product";
         await context.SaveChangesAsync();
     }
-    return Results.Ok("Result Succeedd");
+    return Results.Ok("Result Succeed");
+});
+
+app.MapGet("/add-product", async (AppDbContext context) =>
+{
+    var products = await context.Products.FirstOrDefaultAsync();
+    if (products is null)
+    {
+        context.Products.Add(new BackgroundJobDemo.Entities.Product()
+        {
+            Id = 0,
+            Name = "Product",
+            Price = 0,
+        });
+        await context.SaveChangesAsync();
+    }
+    return Results.Ok("Add Product Succeed");
 });
 
 app.Run();
