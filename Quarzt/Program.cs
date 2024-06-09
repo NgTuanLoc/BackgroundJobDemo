@@ -33,21 +33,21 @@ builder.Services.AddQuartz(q =>
 
     q.UseTimeZoneConverter();
 
-    q.UsePersistentStore(s =>
-    {
-        s.UseProperties = true;
-        s.RetryInterval = TimeSpan.FromSeconds(15);
+    //q.UsePersistentStore(s =>
+    //{
+    //    s.UseProperties = true;
+    //    s.RetryInterval = TimeSpan.FromSeconds(15);
 
-        s.UseSqlServer(connectionString ?? "");
+    //    s.UseSqlServer(connectionString ?? "");
 
-        s.UseJsonSerializer();
+    //    s.UseJsonSerializer();
 
-        s.UseClustering(c =>
-        {
-            c.CheckinMisfireThreshold = TimeSpan.FromSeconds(20);
-            c.CheckinInterval = TimeSpan.FromSeconds(10);
-        });
-    });
+    //    s.UseClustering(c =>
+    //    {
+    //        c.CheckinMisfireThreshold = TimeSpan.FromSeconds(20);
+    //        c.CheckinInterval = TimeSpan.FromSeconds(10);
+    //    });
+    //});
 });
 
 builder.Services.AddMassTransit(x =>

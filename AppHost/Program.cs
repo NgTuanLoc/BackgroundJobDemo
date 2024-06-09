@@ -33,6 +33,23 @@ var sqlServer = builder.AddContainer("sqlServer", "mcr.microsoft.com/mssql/serve
 //    .WithReference(redis)
 //    .WithReference(db.GetEndpoint("db"));
 
+//builder.AddProject<Projects.Quarzt>("quarzt")
+//    .WithEnvironment("IsAspireRunning", "true")
+//    .WithReference(redis)
+//    .WithReference(rabbitmq)
+//    .WithReference(sqlServer.GetEndpoint("sqlServer"))
+//    .WithReference(db.GetEndpoint("db"));
+
+//builder.AddProject<Projects.QuarztDemo>("quarztdemo")
+//    .WithReplicas(5);
+
+// Services
+//builder.AddProject<Projects.BackgroundJobDemo>("background-job")
+//    .WithEnvironment("IsAspireRunning", "true")
+//    .WithReplicas(5)
+//    .WithReference(redis)
+//    .WithReference(db.GetEndpoint("db"));
+
 builder.AddProject<Projects.Quarzt>("quarzt")
     .WithEnvironment("IsAspireRunning", "true")
     .WithReference(redis)
