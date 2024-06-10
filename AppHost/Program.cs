@@ -19,19 +19,20 @@ var rabbitmq = builder.AddRabbitMQ("rabbitmq")
     .WithEndpoint(name: "management", scheme: "http", targetPort: 15672)
     .PublishAsContainer();
 
-var sqlServer = builder.AddContainer("sqlServer", "mcr.microsoft.com/mssql/server", "2019-latest")
-    .WithEnvironment("SA_PASSWORD", "Strong!Passw0rd")
-    .WithEnvironment("ACCEPT_EULA", "Y")
-    .WithEndpoint(port: 1433, targetPort: 1433)
-    .WithVolume("VolumeMount.sqlserver.data", "/var/opt/mssql")
-    .PublishAsContainer();
+//var sqlServer = builder.AddContainer("sqlServer", "mcr.microsoft.com/mssql/server", "2019-latest")
+//    .WithEnvironment("SA_PASSWORD", "Strong!Passw0rd")
+//    .WithEnvironment("ACCEPT_EULA", "Y")
+//    .WithEndpoint(port: 1433, targetPort: 1433)
+//    .WithVolume("VolumeMount.sqlserver.data", "/var/opt/mssql")
+//    .PublishAsContainer();
 
 // Services
-//builder.AddProject<Projects.BackgroundJobDemo>("background-job")
-//    .WithEnvironment("IsAspireRunning", "true")
-//    .WithReplicas(5)
-//    .WithReference(redis)
-//    .WithReference(db.GetEndpoint("db"));
+builder.AddProject<Projects.BackgroundJobDemo>("background-job")
+    .WithEnvironment("IsAspireRunning", "true")
+    .WithReplicas(5)
+    .WithReference(redis)
+    .WithReference(rabbitmq)
+    .WithReference(db.GetEndpoint("db"));
 
 //builder.AddProject<Projects.Quarzt>("quarzt")
 //    .WithEnvironment("IsAspireRunning", "true")
@@ -50,11 +51,11 @@ var sqlServer = builder.AddContainer("sqlServer", "mcr.microsoft.com/mssql/serve
 //    .WithReference(redis)
 //    .WithReference(db.GetEndpoint("db"));
 
-builder.AddProject<Projects.Quarzt>("quarzt")
-    .WithEnvironment("IsAspireRunning", "true")
-    .WithReference(redis)
-    .WithReference(rabbitmq)
-    .WithReference(sqlServer.GetEndpoint("sqlServer"))
-    .WithReference(db.GetEndpoint("db"));
+//builder.AddProject<Projects.Quarzt>("quarzt")
+//    .WithEnvironment("IsAspireRunning", "true")
+//    .WithReference(redis)
+//    .WithReference(rabbitmq)
+//    .WithReference(sqlServer.GetEndpoint("sqlServer"))
+//    .WithReference(db.GetEndpoint("db"));
 
 builder.Build().Run();

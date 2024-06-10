@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="DistributedLock" Version="2.4.0" />
 		<PackageReference Include="DistributedLock.Core" Version="1.0.6" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.3-develop.1837" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">

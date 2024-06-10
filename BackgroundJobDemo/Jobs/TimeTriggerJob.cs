@@ -1,4 +1,7 @@
 ﻿using BackgroundJobDemo.Infrastructure;
+using BackgroundJobDemo.Infrastructure.Models;
+using MassTransit;
+using MassTransit.Transports;
 using Medallion.Threading.Redis;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -37,23 +40,17 @@ public class TimeTriggerJob(ILogger<TimeTriggerJob> logger, IConfiguration confi
             return;
         }
 
-        await UpdateProductAsync(now.Second.ToString());
+        await PublishMessageAsync();
+        //await UpdateProductAsync(now.Second.ToString());
 
         _logger.LogInformation("Timed Background Service is working. Time: {time}", now);
     }
 
-    private async Task UpdateProductAsync(string second)
+    private async Task PublishMessageAsync()
     {
         using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        var product = await db.Products.FirstOrDefaultAsync();
-        if (product != null)
-        {
-            product.Price++;
-            product.Name = $"{product.Name}==={second}";
-            await db.SaveChangesAsync();
-        }
+        var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
+        await publishEndpoint.Publish(new TestModel() { Id = 123 });
     }
 
     public Task StopAsync(CancellationToken stoppingToken)

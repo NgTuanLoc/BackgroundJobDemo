@@ -1,5 +1,7 @@
 using BackgroundJobDemo.Infrastructure;
+using BackgroundJobDemo.IntergrationEvents;
 using demo_background_job.Job;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +9,27 @@ var builder = WebApplication.CreateBuilder(args);
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumersFromNamespaceContaining<DemoConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.UseMessageRetry(r =>
+        {
+            r.Handle<RabbitMqConnectionException>();
+            r.Interval(5, TimeSpan.FromSeconds(10));
+        });
+
+        cfg.Host(new Uri(builder.Configuration.GetConnectionString("rabbitmq") ?? ""));
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
+
 // Jobs
+//builder.Services.AddScoped<IHostedService, TimeTriggerJob>();
 builder.Services.AddHostedService<TimeTriggerJob>();
 
 var app = builder.Build();
