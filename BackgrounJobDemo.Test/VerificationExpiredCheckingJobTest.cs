@@ -1,8 +1,10 @@
+using BackgroundJobDemo.Infrastructure.Models;
 using demo_background_job.Job;
 using MassTransit;
 using Medallion.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace VerificationExpiredCheckingJobTests;
@@ -14,9 +16,19 @@ public class VerificationExpiredCheckingJobTests
     private readonly TimeProvider _timeProvider;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IDistributedLock _distributedLock;
+    private readonly IOptions<AppSettings> _options;
 
     public VerificationExpiredCheckingJobTests()
     {
+        // Mock appsettings
+        var appSettings = new AppSettings
+        {
+            SchedulingJobTimeUnit = "Hour"
+        };
+
+        _options = Substitute.For<IOptions<AppSettings>>();
+        _options.Value.Returns(appSettings);
+        // Mock other dependency
         _logger = Substitute.For<ILogger<VerificationExpiredCheckingJob>>();
         _scopeFactory = Substitute.For<IServiceScopeFactory>();
         _timeProvider = Substitute.For<TimeProvider>();
@@ -39,7 +51,7 @@ public class VerificationExpiredCheckingJobTests
     public async Task StartAsync_ShouldStartTimer()
     {
         // Arrange
-        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider);
+        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider, _options);
 
         // Act
         await job.StartAsync(CancellationToken.None);
@@ -53,7 +65,7 @@ public class VerificationExpiredCheckingJobTests
     public async Task DoWorkAsync_ShouldPublishMessageAndLogInformation()
     {
         // Arrange
-        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider);
+        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider, _options);
 
         // Simulate acquiring the lock
         var handle = Substitute.For<IDistributedSynchronizationHandle>();
@@ -75,7 +87,7 @@ public class VerificationExpiredCheckingJobTests
     public async Task DoWorkAsync_Should_Skip_If_Lock_Cannot_Be_Acquired()
     {
         // Arrange
-        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider);
+        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider, _options);
 
         // Simulate acquiring the lock
         IDistributedSynchronizationHandle? handle = null;
@@ -95,7 +107,7 @@ public class VerificationExpiredCheckingJobTests
     public async Task StopAsync_ShouldStopTimer()
     {
         // Arrange
-        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider);
+        var job = new VerificationExpiredCheckingJob(_logger, _scopeFactory, _timeProvider, _options);
 
         // Act
         await job.StartAsync(CancellationToken.None);

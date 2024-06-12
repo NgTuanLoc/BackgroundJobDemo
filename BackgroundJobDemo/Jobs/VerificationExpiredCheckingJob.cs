@@ -1,16 +1,18 @@
 ﻿using BackgroundJobDemo.Infrastructure.Extensions;
+using BackgroundJobDemo.Infrastructure.Models;
 using MassTransit;
 using Medallion.Threading;
+using Microsoft.Extensions.Options;
 
 namespace demo_background_job.Job;
 
-public class VerificationExpiredCheckingJob(ILogger<VerificationExpiredCheckingJob> logger, IServiceScopeFactory scopeFactory, TimeProvider timeProvider) : IHostedService
+public class VerificationExpiredCheckingJob(ILogger<VerificationExpiredCheckingJob> logger, IServiceScopeFactory scopeFactory, TimeProvider timeProvider, IOptions<AppSettings> appSettings) : IHostedService
 {
     private readonly ILogger<VerificationExpiredCheckingJob> _logger = logger;
     private Timer? _timer = null;
     private readonly TimeProvider _timeProvider = timeProvider;
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
-    private readonly TimeUnit _timeUnit = TimeUnit.Minute;
+    private readonly TimeUnit _timeUnit = appSettings.Value.SchedulingJobTimeUnit.ToTimeUnit();
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
